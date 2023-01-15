@@ -5,14 +5,14 @@ const bodyParser = require("body-parser");
 const { Configuration, OpenAIApi } = require("openai");
 
 const configuration = new Configuration({
-  apiKey: "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",
+  apiKey: "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",
 });
 const openai = new OpenAIApi(configuration);
 
 // Set up the server
 const app = express();
 app.use(bodyParser.json());
-app.use(cors())
+app.use(cors());
 
 // Set up the ChatGPT endpoint
 app.post("/chat", async (req, res) => {

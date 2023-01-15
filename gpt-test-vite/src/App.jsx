@@ -76,24 +76,6 @@ function App() {
   const [response2, setResponse2] = useState("");
   const [response3, setResponse3] = useState("");
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
-
-    const promise = axios
-    .post("http://localhost:8080/chat", { prompt })
-
-    trackPromise(
-    promise // {prompt}
-      .then((res) => {
-        // Update the response state with the server's response
-        setResponse(res.data);
-      })
-      
-      .catch((err) => {
-        console.error(err);
-      }));
-  };
-
   const [finalArray, setFinalArray] = useState([]);
 
   const generateResponses = (e) => {
@@ -112,7 +94,6 @@ function App() {
     .then(
       axios.spread((...responses) => {
         setFinalArray(shuffle([{text: responses[0].data, id: 0, lie: true},{text: responses[1].data, id: 1, lie: false}, {text: responses[2].data, id: 2, lie: false}]))
-        
       })
     ))
     
@@ -169,6 +150,32 @@ function App() {
       }
     }
   }
+
+  const handleRandomise =  (e) => {
+    e.preventDefault()
+    
+    const url = "http://localhost:8080/chat";
+
+    const prompt2 = actors[Math.floor(Math.random() * actors.length)]
+
+    let lie = `make a very realistic lie about ${prompt2} that is hard to tell is a lie`
+    let truth = `give me a fact about ${prompt2}`
+
+    const postOne = axios.post(url, {prompt: lie})
+    const postTwo = axios.post(url, {prompt: truth})
+    const postThree = axios.post(url, {prompt: truth})
+
+    trackPromise(
+    axios.all([postOne, postTwo, postThree])
+    .then(
+      axios.spread((...responses) => {
+        setFinalArray(shuffle([{text: responses[0].data, id: 0, lie: true},{text: responses[1].data, id: 1, lie: false}, {text: responses[2].data, id: 2, lie: false}]))
+        console.log(prompt2)
+        console.log(lie)
+        console.log(truth)
+      })
+    ))
+  }
   
 
   return (
@@ -183,6 +190,7 @@ function App() {
             <div className=" flex gap-2">
               <input id='txt' className=' rounded-md font-semibold text-white bg-gray-700 border-gray-400 border-2 px-4 py-2 text-center' placeholder='Celeb:' type="text" onChange={handleInput} style={{width: inputLength}} />
               <button className=' transition-all hover:translate-y-[-5px] font-semibold hover:font-bold bg-green-100 border-2 border-green-200 px-4 py-2 rounded-md text-green-600 hover:border-green-400' onClick={generateResponses}>Search</button>
+              <button className=' transition-all hover:translate-y-[-5px] font-semibold hover:font-bold bg-pink-100 border-2 border-pink-200 px-4 py-2 rounded-md text-pink-600 hover:border-pink-400' onClick={handleRandomise} >Randomise</button>
             </div>
             <LoadingIndicator />
             {finalArray.length !== 0 ? <div className=" flex flex-col w-auto h-auto gap-10 relative top-10">
