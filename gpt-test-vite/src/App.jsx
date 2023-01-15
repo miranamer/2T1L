@@ -7,6 +7,8 @@ import Card from './components/Card.jsx';
 import toast, { Toaster } from 'react-hot-toast';
 import {BsGithub} from 'react-icons/bs'
 import {FiHelpCircle} from 'react-icons/fi'
+import Modal from 'react-modal';
+import {RiNumber1, RiNumber2} from 'react-icons/ri'
 
 function App() {
 
@@ -176,6 +178,35 @@ function App() {
       })
     ))
   }
+
+  const [modalIsOpen, setIsOpen] = useState(false);
+
+  function openModal() {
+    setIsOpen(true);
+  }
+
+  
+
+  function closeModal() {
+    setIsOpen(false);
+  }
+
+  const customStyles = {
+    content: {
+      top: '50%',
+      left: '50%',
+      right: 'auto',
+      bottom: 'auto',
+      marginRight: '-50%',
+      width: '700px',
+      height: '800px',
+      transform: 'translate(-50%, -50%)',
+      
+    },
+    overlay: {
+      backgroundColor: 'rgba(0, 0, 0, 0.25)',
+    }
+  };
   
 
   return (
@@ -184,7 +215,7 @@ function App() {
         <div className=" bg-gray-900 text-white font-[poppins]">
           <Toaster/>
           <a href="https://github.com/miranamer"><BsGithub className=' hover:animate-pulse hover:scale-[150%] transition-all text-3xl fixed bottom-10 right-[110px] hover:text-purple-300 hover:cursor-pointer' /></a>
-          <FiHelpCircle className=' transition-all hover:cursor-pointer hover:scale-150 hover:text-yellow-400 text-3xl fixed bottom-10 right-10' />
+          <FiHelpCircle onClick={openModal} className=' transition-all hover:cursor-pointer hover:scale-150 hover:text-yellow-400 text-3xl fixed bottom-10 right-10' />
           <div className=" flex flex-col gap-4 items-center justify-center h-screen">
             <h1 className=' font-[fauna] text-3xl font-bold '><span className=' text-gray-400 font-thin'>ChatGPT</span> 2<span className=' text-green-300'>T</span>1<span className=' text-red-300'>L</span></h1>
             <div className=" flex gap-2">
@@ -198,7 +229,28 @@ function App() {
               {finalArray.length !== 0 ? (<button onClick={handleAnswer} className=' h-[60px] transition-all hover:translate-y-[-5px] hover:font-bold font-semibold bg-blue-100 border-2 border-blue-200 px-4 py-2 rounded-md text-blue-600 hover:border-blue-400'>Submit</button>) : null}
             </div> : null}
           </div>
+
+          <Modal
+            isOpen={modalIsOpen}        
+            onRequestClose={closeModal}
+            contentLabel="Example Modal"
+            style={customStyles}
+          >
+            
+          <div className=" relative top-[25%] py-2 font-semibold text-xl flex flex-col gap-10 items-center justify-center h-auto">
+            <p className=' text-green-500 text-2xl'><RiNumber1 /></p>
+            <p>Enter Celeb Name And Click Search <span className=' font-bold'>OR</span> Click Randomise</p>
+            <div className=" bg-black w-[600px] h-[1px]"></div>
+
+            <p className=' text-green-500 text-2xl'><RiNumber2 /></p>
+            <p>Select The Statement That You Think Is A Lie</p>
+            <div className=" bg-black w-[600px] h-[1px]"></div>
+          </div>
+
+          </Modal>
+        
         </div>
+        
 
     </>
   );
