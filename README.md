@@ -21,3 +21,5 @@ https://user-images.githubusercontent.com/91673777/212726597-c7e96b01-dad0-4af9-
 
 ![image](https://user-images.githubusercontent.com/91673777/212731877-fcdab0ec-0ecc-4d0f-bc5c-830c064221d3.png)
 
+<p>API Currently Turned Off As I Would Have To Buy ChatGPT Tokens To Make It Public</p>
+
