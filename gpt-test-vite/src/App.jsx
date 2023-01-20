@@ -80,26 +80,61 @@ function App() {
 
   const [finalArray, setFinalArray] = useState([]);
 
-  const generateResponses = (e) => {
+  const generateResponses = async (e) => {
+
     e.preventDefault();
-    const url = "http://localhost:8080/chat";
 
-    let lie = `make a very realistic lie about ${prompt} that is hard to tell is a lie`
-    let truth = `give me a fact about ${prompt}`
+    const filter = await trackPromise(axios.post(
+      'https://api.openai.com/v1/moderations',
+      // '{"input": "Sample text goes here"}',
+      {
+          "input": `${prompt}`
+      },
+      {
+          headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $OPENAI_KEY'
+          }
+      }
+  ));
 
-    const postOne = axios.post(url, {prompt: lie})
-    const postTwo = axios.post(url, {prompt: truth})
-    const postThree = axios.post(url, {prompt: truth})
+  const flagged = filter.data.results[0].flagged
+  //console.log(filter)
+  //console.log(flagged)
+
+  if(flagged){
+    toast.error('Inappropriate Prompt! - Try Again')
+  }
+
+  else{
+
+    const url = "https://nodejsserver-0khg.onrender.com/chat";
+
+    let lie = `make a very realistic lie about ${prompt}, which seems real.`;
+    let truth = `give me an interesting fact about ${prompt}`;
+
+    const postOne = axios.post(url, { prompt: lie });
+    const postTwo = axios.post(url, { prompt: truth });
+    const postThree = axios.post(url, { prompt: truth });
 
     trackPromise(
-    axios.all([postOne, postTwo, postThree])
-    .then(
-      axios.spread((...responses) => {
-        setFinalArray(shuffle([{text: responses[0].data, id: 0, lie: true},{text: responses[1].data, id: 1, lie: false}, {text: responses[2].data, id: 2, lie: false}]))
-      })
-    ))
-    
+      axios.all([postOne, postTwo, postThree]).then(
+        axios.spread((...responses) => {
+          setFinalArray(
+            shuffle([
+              { text: responses[0].data, id: 0, lie: true },
+              { text: responses[1].data, id: 1, lie: false },
+              { text: responses[2].data, id: 2, lie: false },
+            ])
+          );
+          //console.log(responses[1].data);
+        })
+      )
+    );
+
   }
+    
+  };
 
   function shuffle(array) {
     let currentIndex = array.length,  randomIndex;
@@ -119,7 +154,19 @@ function App() {
   const [choice, setChoice] = useState(100);
   const [right, setRight] = useState(100);
 
-  const actors = ['The Rock', 'Tom Hardy', 'Chris Evans', 'Chris Pratt', 'Steve Harvey', 'Brad Pitt']; // Use An API After
+  const topics = [ // randomise options
+    'sports',
+    'space',
+    'mythology',
+    'languages',
+    'movies',
+    'tv shows',
+    'programming',
+    'gaming',
+    'geography',
+    'physics',
+    'math'
+  ]; // Use An API After
 
   const sleep = (milliseconds) => {
     return new Promise(resolve => setTimeout(resolve, milliseconds))
@@ -156,12 +203,12 @@ function App() {
   const handleRandomise =  (e) => {
     e.preventDefault()
     
-    const url = "http://localhost:8080/chat";
+    const url = "https://nodejsserver-0khg.onrender.com/chat";
 
-    const prompt2 = actors[Math.floor(Math.random() * actors.length)]
+    const prompt2 = topics[Math.floor(Math.random() * topics.length)]
 
-    let lie = `make a very realistic lie about ${prompt2} that is hard to tell is a lie`
-    let truth = `give me a fact about ${prompt2}`
+    let lie = `make a very realistic lie about ${prompt}, which seems real.`;
+    let truth = `give me an interesting fact about ${prompt}`;
 
     const postOne = axios.post(url, {prompt: lie})
     const postTwo = axios.post(url, {prompt: truth})
